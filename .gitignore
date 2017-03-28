@@ -1,0 +1,14 @@
+.gradle
+build
+bin
+lib
+.idea
+*.iws
+*.ipr
+/build-eclipse/
+logs
+target
+.project
+.classpath
+.settings
+*.iml
