@@ -1,26 +1,26 @@
 package com.arun.duo.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.arun.duo.delegate.LoginDelegate;
+import com.arun.duo.util.Constants;
 import com.arun.duo.viewBean.LoginBean;
 import com.duosecurity.duoweb.DuoWeb;
 
 @Controller
 public class LoginController {
-
-	String IKEY = "DIX0BL96157W2NM1ZM1D";
-	String SKEY = "xV6zhkseI6D5kYDekOzaKIrOGq0VygR8rWTBoHy6";
-	String AKEY = "checkcheckcheckcheckcheckcheckcheckcheckcheck";
-	String DUO_USERNAME = "john";
 
 	@Autowired
 	private LoginDelegate loginDelegate;
@@ -52,8 +52,9 @@ public class LoginController {
 
 				System.out.println("User authenticated");
 
-				String genaratedSignedRequest = DuoWeb.signRequest(IKEY, SKEY,
-						AKEY, loginBean.getUsername());
+				String genaratedSignedRequest = DuoWeb.signRequest(
+						Constants.IKEY, Constants.SKEY, Constants.AKEY,
+						loginBean.getUsername());
 
 				request.setAttribute("genaratedSignedRequest",
 						genaratedSignedRequest);
@@ -83,10 +84,12 @@ public class LoginController {
 			@ModelAttribute("sig_response") String loginBean) {
 		ModelAndView model = null;
 		try {
-			String verifiedResponse = DuoWeb.verifyResponse(IKEY, SKEY, AKEY,
-					loginBean);
+			String verifiedResponse = DuoWeb.verifyResponse(Constants.IKEY,
+					Constants.SKEY, Constants.AKEY, loginBean);
 
-			if ("john".equalsIgnoreCase(verifiedResponse) || "pktr".equalsIgnoreCase(verifiedResponse)) {
+			if (!StringUtils.isEmpty(verifiedResponse)
+					&& Constants.USERNAMES.contains(verifiedResponse
+							.toLowerCase())) {
 				System.out.println("User Login Successful");
 				//request.setAttribute("loggedInUser", "john");
 				model = new ModelAndView("welcome");
